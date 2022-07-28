@@ -23,8 +23,10 @@ class CartItem extends Component {
                 break;
             }
         }
+        console.log("inc_cartIndex", cartIndex)
         const prevData = this.props.UserCarts[cartIndex];
-        const newData = { ...prevData, quantity: prevData?.quantity < 1 ? 1 : prevData?.quantity + 1 }
+        const newData = { ...prevData };
+        newData["quantity"] = prevData?.quantity < 1 ? 1 : prevData?.quantity + 1;
         this.props.UpdateUserCart(cartIndex, { ...newData });
     }
 
@@ -36,8 +38,10 @@ class CartItem extends Component {
                 break;
             }
         }
+        console.log("dec_cartIndex", cartIndex)
         const prevData = this.props.UserCarts[cartIndex];
-        const newData = { ...prevData, quantity: prevData?.quantity <= 1 ? 1 : prevData?.quantity - 1 }
+        const newData = { ...prevData };
+        newData["quantity"] = prevData?.quantity <= 1 ? 1 : prevData?.quantity - 1;
         this.props.UpdateUserCart(cartIndex, { ...newData });
     }
 
@@ -115,7 +119,7 @@ class CartItem extends Component {
                 "variables": {}
             })
         })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
             .then(async (res) => {
                 const json_data = await res.json();
                 const raw_data = json_data?.data?.product;
@@ -147,11 +151,11 @@ class CartItem extends Component {
         this.getdata();
     }
 
-    // componentDidUpdate = (prevProps) => {
-    //     if (this.props.TotalCarts !== prevProps.TotalCarts) {
-    //         this.getdata();
-    //     }
-    // }
+    componentDidUpdate = (prevProps) => {
+        if (this.props.TotalCarts !== prevProps.TotalCarts) {
+            this.getdata();
+        }
+    }
 
     render() {
         return (

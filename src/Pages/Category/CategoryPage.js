@@ -32,7 +32,7 @@ class CategoryPage extends Component {
                 })
             })
                 .catch(error => {
-                    console.log(error);
+                    console.error(error);
                     this.setState({ error: true });
                 })
                 .then(async (res) => {

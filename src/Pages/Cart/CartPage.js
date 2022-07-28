@@ -24,7 +24,6 @@ class CartPage extends Component {
     }
 
     render() {
-        console.log(this.props.UserCarts)
         return (
             <main
                 className='cartpage_main'

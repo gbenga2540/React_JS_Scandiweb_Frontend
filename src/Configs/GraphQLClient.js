@@ -5,12 +5,12 @@ import { back_end_endpoint } from './BackEndEndpoint';
 const errorLink = onError(({ graphqlErrors, networkError }) => {
     if (graphqlErrors) {
         graphqlErrors.map(({ message, location, path }) => (
-            console.log(message)
+            console.error(message)
         ))
     }
     if (networkError) {
         networkError.map(err => (
-            console.log('GraphQL Network Error ' + err)
+            console.error('GraphQL Network Error ' + err)
         ))
     }
 })

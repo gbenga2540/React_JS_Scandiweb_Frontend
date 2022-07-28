@@ -18,7 +18,7 @@ class CurrencySwitcher extends Component {
                 "variables": {}
             })
         })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
             .then(async (res) => {
                 const json_data = await res.json();
                 const raw_data = json_data?.data?.currencies;
