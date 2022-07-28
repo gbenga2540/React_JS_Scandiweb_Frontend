@@ -41,6 +41,7 @@ class CategoryPage extends Component {
                     const json_data = await res.json();
                     const raw_data = json_data?.data?.category;
                     console.log(raw_data)
+                    this.props.SetProductList(raw_data?.products);
                     this.setState({ curr_cat_products: raw_data?.products });
                 }).finally(() => {
                     if (this.state.curr_cat_products?.length > 0) {
@@ -95,7 +96,7 @@ class CategoryPage extends Component {
                 <div
                     className='cp_m_fade'
                     id={this.props.openMiniCartOverlay ? 'cp_m_fade' : ''}
-                ></div>
+                >{console.log("first", this.props.ProductList)}</div>
                 {!this.state.loading && <div>
                     <h1 className='cp_m_h1'>
                         {this.props.AllCategories?.length > 0 &&
@@ -147,8 +148,16 @@ class CategoryPage extends Component {
 const mapStateToProps = (state) => {
     return {
         AllCategories: state.AllCategories,
-        CurrentCategory: state.CurrentCategory
+        CurrentCategory: state.CurrentCategory,
+        ProductList: state.ProductList
     }
 }
 
-export default (connect(mapStateToProps)(CategoryPage));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        SetProductList: (p_list) => dispatch({ type: 'SET_PRODUCT_LIST', payload: p_list }),
+        ClearProductList: () => dispatch({ type: 'CLEAR_PRODUCT_LIST' })
+    }
+}
+
+export default (connect(mapStateToProps, mapDispatchToProps)(CategoryPage));
