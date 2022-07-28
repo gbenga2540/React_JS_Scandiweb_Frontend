@@ -6,13 +6,6 @@ import { connect } from 'react-redux';
 
 class ProductCard extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            price: '',
-        }
-    }
-
     handleAddtoCart = () => {
         const AddtoCart = () => {
             let CartItem = {};
@@ -52,20 +45,11 @@ class ProductCard extends Component {
         this.props.history?.push(`/products/${this.props.product_info?.id}`)
     }
 
-    handleUpdateVar = () => {
+    handlePriceBasedOnCurr = () => {
         if (this.props.product_info?.prices.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.product_info?.prices.filter(item => item?.currency?.symbol === current_currency_symbol);
-            this.setState({ price: currency_obj[0]?.amount });
-        }
-    }
-
-    componentDidMount = () => {
-        this.handleUpdateVar();
-    }
-    componentDidUpdate = (prevProps) => {
-        if (prevProps !== this.props) {
-            this.handleUpdateVar();
+            return currency_obj[0]?.amount;
         }
     }
 
@@ -114,7 +98,7 @@ class ProductCard extends Component {
                         {this.props.AllCurrencies?.length > 0 ?
                             this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol : ''
                         }
-                        {this.state.price}
+                        {this.handlePriceBasedOnCurr()}
                     </p>
                 </div>
             </section>

@@ -12,7 +12,6 @@ class DescriptionPage extends Component {
         super(props)
 
         this.state = {
-            price: '',
             galleryIndex: 0,
             productAttribs: {},
             ViewMoreDesc: false,
@@ -43,7 +42,6 @@ class DescriptionPage extends Component {
                 if (raw_data) {
                     this.setState({ error: false });
                 }
-                this.handlePriceBasedOnCurr();
             })
     }
 
@@ -78,7 +76,7 @@ class DescriptionPage extends Component {
         if (this.props.CurrentProduct?.prices?.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.CurrentProduct?.prices?.filter(item => item?.currency?.symbol === current_currency_symbol);
-            this.setState({ price: currency_obj[0]?.amount });
+            return currency_obj[0]?.amount;
         }
     }
 
@@ -126,7 +124,6 @@ class DescriptionPage extends Component {
 
     componentDidMount = () => {
         document.title = 'Scandiweb Dev Test | Description';
-        this.setState({ error: false });
         this.props.ClearCurrentProduct();
         this.getdata();
         this.setState({ productAttribs: {} });
@@ -135,19 +132,15 @@ class DescriptionPage extends Component {
 
     componentDidUpdate = (prevProps) => {
         if (prevProps.match?.params?.id !== this.props.match?.params?.id) {
-            this.setState({ error: false });
             this.props.ClearCurrentProduct();
             this.getdata();
             this.setState({ productAttribs: {} });
             window.scrollTo(0, 0);
         }
-        if (this.props.CurrentCurrency !== prevProps.CurrentCurrency) {
-            this.setState({ error: false });
-            this.handlePriceBasedOnCurr();
-        }
     }
 
     render() {
+        console.log("p_Attribs", this.state.productAttribs)
         return (
             <main
                 className='descpage_main'
@@ -225,7 +218,7 @@ class DescriptionPage extends Component {
                                     </div>
                                 )}
                             <p className='dp_m_2_p'>PRICE:</p>
-                            <p className='dp_m_2_c'>{`${this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol}${this.state.price}`}</p>
+                            <p className='dp_m_2_c'>{`${this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol}${this.handlePriceBasedOnCurr()}`}</p>
                             <button
                                 disabled={!this.props.CurrentProduct?.inStock}
                                 onClick={this.handleAddtoCart}
