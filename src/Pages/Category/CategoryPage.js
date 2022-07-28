@@ -11,11 +11,9 @@ class CategoryPage extends Component {
         super(props)
 
         this.state = {
-            curr_cat_products: [],
             max_product_per_page: 6,
             p_first_index: 0,
             p_last_index: 6,
-            loading: true,
             error: false
         }
     }
@@ -40,14 +38,9 @@ class CategoryPage extends Component {
                 .then(async (res) => {
                     const json_data = await res.json();
                     const raw_data = json_data?.data?.category;
-                    console.log(raw_data)
                     this.props.SetProductList(raw_data?.products);
-                    this.setState({ curr_cat_products: raw_data?.products });
-                }).finally(() => {
-                    if (this.state.curr_cat_products?.length > 0) {
-                        this.setState({ loading: false, error: false });
-                    } else {
-                        this.setState({ loading: true });
+                    if (this.props.ProductList?.length > 0) {
+                        this.setState({ error: false });
                     }
                     this.setState({ p_first_index: 0, p_last_index: this.state.max_product_per_page });
                 })
@@ -62,14 +55,15 @@ class CategoryPage extends Component {
     }
 
     increaseProductFilter = () => {
-        if (this.state.p_last_index < this.state.curr_cat_products?.length) {
+        if (this.state.p_last_index < this.props.ProductList?.length) {
             this.setState({ p_first_index: this.state.p_first_index + this.state.max_product_per_page, p_last_index: this.state.p_last_index + this.state.max_product_per_page });
         }
         window.scrollTo(0, 0);
     }
 
     handle_Update = () => {
-        document.title = `Scandiweb Dev Test | ${this.props.AllCategories?.length > 0 && this.props.AllCategories[this.props.CurrentCategory][0]?.toUpperCase()}${this.props.AllCategories?.length > 0 && this.props.AllCategories[this.props.CurrentCategory]?.slice(1).toLowerCase()}`;
+        this.props.ClearProductList();
+        document.title = `Scandiweb Dev Test ${this.props.AllCategories?.length > 0 ? '|' : ''} ${this.props.AllCategories?.length > 0 ? this.props.AllCategories[this.props.CurrentCategory][0]?.toUpperCase() : ''}${this.props.AllCategories?.length > 0 ? this.props.AllCategories[this.props.CurrentCategory]?.slice(1).toLowerCase() : ''}`;
         this.getdata();
         window.scrollTo(0, 0);
     }
@@ -96,8 +90,8 @@ class CategoryPage extends Component {
                 <div
                     className='cp_m_fade'
                     id={this.props.openMiniCartOverlay ? 'cp_m_fade' : ''}
-                >{console.log("first", this.props.ProductList)}</div>
-                {!this.state.loading && <div>
+                ></div>
+                {this.props.ProductList?.length > 0 && <div>
                     <h1 className='cp_m_h1'>
                         {this.props.AllCategories?.length > 0 &&
                             this.props.AllCategories[this.props.CurrentCategory][0]?.toUpperCase()
@@ -107,8 +101,8 @@ class CategoryPage extends Component {
                         }
                     </h1>
                     <div className='cp_m_product_w'>
-                        {this.state.curr_cat_products &&
-                            this.state.curr_cat_products?.slice(this.state.p_first_index, this.state.p_last_index)?.map((item, i) =>
+                        {this.props.ProductList?.length > 0 &&
+                            this.props.ProductList?.slice(this.state.p_first_index, this.state.p_last_index)?.map((item, i) =>
                                 <ProductCard key={i} product_info={item} />
                             )
                         }
@@ -131,7 +125,7 @@ class CategoryPage extends Component {
                     </div>
                 </div>
                 }
-                {this.state.loading && !this.state.error &&
+                {this.props.ProductList?.length < 0 && !this.state.error &&
                     <p className='cp_m_loading'>Loading Products...</p>
                 }
                 {this.state.error &&
