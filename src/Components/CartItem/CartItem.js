@@ -149,7 +149,7 @@ class CartItem extends Component {
 
     componentDidUpdate = (prevProps) => {
         if (this.props.TotalCarts !== prevProps.TotalCarts) {
-            // this.getdata();
+            this.getdata();
         }
     }
 

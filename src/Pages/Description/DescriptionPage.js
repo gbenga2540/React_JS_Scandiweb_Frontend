@@ -236,7 +236,7 @@ class DescriptionPage extends Component {
                                         this.props.CurrentProduct?.description :
                                         this.props.CurrentProduct?.description?.slice(0, 200)}
                                 ${this.state.ViewMoreDesc ? '' : '...'}`) :
-                                    parse(`${this.props.CurrentProduct?.description}`)
+                                    parse(`${this.props.CurrentProduct?.description === undefined ? '<p></p>' : this.props.CurrentProduct?.description}`)
                                 }
                             </div>
                             {this.props.CurrentProduct?.description?.length > 200 &&
