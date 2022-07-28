@@ -76,7 +76,7 @@ class DescriptionPage extends Component {
         if (this.props.CurrentProduct?.prices?.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.CurrentProduct?.prices?.filter(item => item?.currency?.symbol === current_currency_symbol);
-            return currency_obj[0]?.amount;
+            return currency_obj[0]?.amount === undefined ? '' : currency_obj[0]?.amount;
         }
     }
 
@@ -140,7 +140,6 @@ class DescriptionPage extends Component {
     }
 
     render() {
-        console.log("p_Attribs", this.state.productAttribs)
         return (
             <main
                 className='descpage_main'
@@ -218,7 +217,7 @@ class DescriptionPage extends Component {
                                     </div>
                                 )}
                             <p className='dp_m_2_p'>PRICE:</p>
-                            <p className='dp_m_2_c'>{`${this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol}${this.handlePriceBasedOnCurr()}`}</p>
+                            <p className='dp_m_2_c'>{`${this.props.AllCurrencies?.length > 0 ? this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol : ''}${this.handlePriceBasedOnCurr() === undefined ? '' : this.handlePriceBasedOnCurr()}`}</p>
                             <button
                                 disabled={!this.props.CurrentProduct?.inStock}
                                 onClick={this.handleAddtoCart}

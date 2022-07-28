@@ -11,7 +11,6 @@ class CartItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            price: '',
             gallery_index: 0
         }
     }
@@ -68,7 +67,7 @@ class CartItem extends Component {
         if (this.props.cart_info?.prices?.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.cart_info?.prices?.filter(item => item?.currency?.symbol === current_currency_symbol);
-            this.setState({ price: currency_obj[0]?.amount });
+            return currency_obj[0]?.amount === undefined ? '' : currency_obj[0]?.amount;
         }
     }
 
@@ -142,23 +141,15 @@ class CartItem extends Component {
                 }
                 this.props.UpdateUserCart(cartIndex, { ...newData });
             })
-            .finally(() => {
-                this.handlePriceBasedOnCurr();
-            })
     }
 
     componentDidMount = () => {
         this.getdata();
-        this.handlePriceBasedOnCurr();
     }
 
     componentDidUpdate = (prevProps) => {
         if (this.props.TotalCarts !== prevProps.TotalCarts) {
-            this.getdata();
-            this.handlePriceBasedOnCurr();
-        }
-        if (this.props.CurrentCurrency !== prevProps.CurrentCurrency) {
-            this.handlePriceBasedOnCurr();
+            // this.getdata();
         }
     }
 
@@ -171,7 +162,7 @@ class CartItem extends Component {
                         <p className='ci_m_1_p'>{this.props.cart_info?.name ? this.props.cart_info?.name : ''}</p>
                         <h4 className='ci_m_1_h4'>
                             {this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol}
-                            {this.state.price}
+                            {this.handlePriceBasedOnCurr() === undefined ? '' : this.handlePriceBasedOnCurr()}
                         </h4>
                         {this.getProductAttributes()?.length > 0 &&
                             this.getProductAttributes()?.map((item, i) =>

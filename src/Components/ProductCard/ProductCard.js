@@ -49,7 +49,7 @@ class ProductCard extends Component {
         if (this.props.product_info?.prices.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.product_info?.prices.filter(item => item?.currency?.symbol === current_currency_symbol);
-            return currency_obj[0]?.amount;
+            return currency_obj[0]?.amount === undefined ? '' : currency_obj[0]?.amount;
         }
     }
 
@@ -98,7 +98,7 @@ class ProductCard extends Component {
                         {this.props.AllCurrencies?.length > 0 ?
                             this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol : ''
                         }
-                        {this.handlePriceBasedOnCurr()}
+                        {this.handlePriceBasedOnCurr() === undefined ? '' : this.handlePriceBasedOnCurr()}
                     </p>
                 </div>
             </section>
