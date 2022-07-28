@@ -16,7 +16,6 @@ class DescriptionPage extends Component {
             galleryIndex: 0,
             productAttribs: {},
             ViewMoreDesc: false,
-            loading: true,
             error: false
         }
     }
@@ -42,10 +41,9 @@ class DescriptionPage extends Component {
                 const raw_data = json_data?.data?.product;
                 this.props.SetCurrentProduct(raw_data);
                 if (raw_data) {
-                    this.setState({ error: false, loading: false });
-                } else {
-                    this.setState({ loading: true });
+                    this.setState({ error: false });
                 }
+                this.handlePriceBasedOnCurr();
             })
     }
 
@@ -132,7 +130,6 @@ class DescriptionPage extends Component {
         this.props.ClearCurrentProduct();
         this.getdata();
         this.setState({ productAttribs: {} });
-        this.handlePriceBasedOnCurr();
         window.scrollTo(0, 0);
     }
 
@@ -142,7 +139,6 @@ class DescriptionPage extends Component {
             this.props.ClearCurrentProduct();
             this.getdata();
             this.setState({ productAttribs: {} });
-            this.handlePriceBasedOnCurr();
             window.scrollTo(0, 0);
         }
         if (this.props.CurrentCurrency !== prevProps.CurrentCurrency) {
@@ -161,7 +157,7 @@ class DescriptionPage extends Component {
                     className='dp_m_fade'
                     id={this.props.openMiniCartOverlay ? 'dp_m_fade' : ''}
                 ></div>
-                {!this.state.loading &&
+                {this.props.CurrentProduct &&
                     <div className='dp_m_w'>
                         <div className='dp_m_1'>
                             <div className='dp_m_1_ia'>
@@ -260,7 +256,7 @@ class DescriptionPage extends Component {
                         </div>
                     </div>
                 }
-                {this.state.loading && !this.state.error &&
+                {!this.props.CurrentProduct && !this.state.error &&
                     <p className='dp_m_loading'>Loading Product Description...</p>
                 }
                 {this.state.error &&
