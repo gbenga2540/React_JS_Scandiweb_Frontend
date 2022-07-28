@@ -23,7 +23,6 @@ class CartItem extends Component {
                 break;
             }
         }
-        console.log("inc_cartIndex", cartIndex)
         const prevData = this.props.UserCarts[cartIndex];
         const newData = { ...prevData, quantity: prevData?.quantity < 1 ? 1 : prevData?.quantity + 1 };
         this.props.UpdateUserCart(cartIndex, { ...newData });
