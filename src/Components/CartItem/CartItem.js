@@ -25,8 +25,7 @@ class CartItem extends Component {
         }
         console.log("inc_cartIndex", cartIndex)
         const prevData = this.props.UserCarts[cartIndex];
-        const newData = { ...prevData };
-        newData["quantity"] = prevData?.quantity < 1 ? 1 : prevData?.quantity + 1;
+        const newData = { ...prevData, quantity: prevData?.quantity < 1 ? 1 : prevData?.quantity + 1 };
         this.props.UpdateUserCart(cartIndex, { ...newData });
     }
 
@@ -38,10 +37,8 @@ class CartItem extends Component {
                 break;
             }
         }
-        console.log("dec_cartIndex", cartIndex)
         const prevData = this.props.UserCarts[cartIndex];
-        const newData = { ...prevData };
-        newData["quantity"] = prevData?.quantity <= 1 ? 1 : prevData?.quantity - 1;
+        const newData = { ...prevData, quantity: prevData?.quantity <= 1 ? 1 : prevData?.quantity - 1 };
         this.props.UpdateUserCart(cartIndex, { ...newData });
     }
 

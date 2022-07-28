@@ -24,6 +24,7 @@ class CartPage extends Component {
     }
 
     render() {
+        console.log("sort", this.props.UserCarts?.sort((a, b) => a.id > b.id))
         return (
             <main
                 className='cartpage_main'
