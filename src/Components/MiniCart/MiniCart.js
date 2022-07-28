@@ -19,7 +19,7 @@ class MiniCart extends Component {
                 <div className='mc_m_ci'>
                     <Scrollbars style={{ width: '100%', height: 350 }}>
                         {this.props.UserCarts?.length > 0 &&
-                            this.props.UserCarts?.reverse()?.map((item, i) =>
+                            this.props.UserCarts?.map((item, i) =>
                                 <CartItem key={i} isMini={true} cart_info={item} />
                             )
                         }
