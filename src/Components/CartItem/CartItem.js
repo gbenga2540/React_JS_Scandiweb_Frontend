@@ -147,11 +147,11 @@ class CartItem extends Component {
         this.getdata();
     }
 
-    componentDidUpdate = (prevProps) => {
-        if (this.props.TotalCarts !== prevProps.TotalCarts) {
-            this.getdata();
-        }
-    }
+    // componentDidUpdate = (prevProps) => {
+    //     if (this.props.TotalCarts !== prevProps.TotalCarts) {
+    //         this.getdata();
+    //     }
+    // }
 
     render() {
         return (

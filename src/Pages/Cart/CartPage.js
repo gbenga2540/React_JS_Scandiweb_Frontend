@@ -38,7 +38,7 @@ class CartPage extends Component {
                     <h1 className='cp_m_h'>CART</h1>
                     {this.props.UserCarts?.length > 0 && <hr className='cp_m_hr' />}
                     {this.props.UserCarts?.length > 0 &&
-                        this.props.UserCarts?.map((item, i) =>
+                        this.props.UserCarts?.reverse()?.map((item, i) =>
                             <div key={i}>
                                 <CartItem isMini={false} cart_info={item} />
                                 <hr className='cp_m_hr' />
