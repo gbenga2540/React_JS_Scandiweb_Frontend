@@ -42,6 +42,9 @@ class CategoryPage extends Component {
                     const raw_data = json_data?.data?.category;
                     this.setState({ curr_cat_products: raw_data?.products });
                 }).finally(() => {
+                    console.log(this.state.curr_cat_products)
+
+
                     if (this.state.curr_cat_products?.length > 0) {
                         this.setState({ loading: false, error: false });
                     } else {
