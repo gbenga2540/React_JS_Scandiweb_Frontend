@@ -63,11 +63,20 @@ class CartItem extends Component {
         }
     }
 
+    handleSubTotalCalc = () => {
+        const price = this.handlePriceBasedOnCurr()
+        const quantity = this.props.cart_info?.quantity;
+        const subtotal = price * quantity;
+        const stringify_subtotal = subtotal.toString();
+        const sub_total_to_2dp = parseFloat(stringify_subtotal).toFixed(2);
+        return sub_total_to_2dp;
+    }
+
     handlePriceBasedOnCurr = () => {
         if (this.props.cart_info?.prices?.length > 0) {
             const current_currency_symbol = this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol;
             const currency_obj = this.props.cart_info?.prices?.filter(item => item?.currency?.symbol === current_currency_symbol);
-            return currency_obj[0]?.amount === undefined ? '' : currency_obj[0]?.amount;
+            return currency_obj[0]?.amount === undefined ? '' : currency_obj[0]?.amount.toFixed(2);
         }
     }
 
@@ -229,6 +238,9 @@ class CartItem extends Component {
                     </span>
                 </div>
                 <div className='ci_m_oof_btn_rmv'>
+                    {!this.props.isMini &&
+                        <p className='ci_m_p_subt'>Sub-Total: <span>{this.props.AllCurrencies[this.props.CurrentCurrency]?.symbol}{this.handleSubTotalCalc()}</span></p>
+                    }
                     {!this.props.isMini && !this.props.cart_info?.inStock &&
                         <p className='ci_m_p_oof'>OUT OF STOCK</p>
                     }

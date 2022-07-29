@@ -1,3 +1,5 @@
+// !-- NOT IN USE --! ... Functionality has been replaced with js fetch
+
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { back_end_endpoint } from './BackEndEndpoint';

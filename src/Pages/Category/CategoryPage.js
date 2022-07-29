@@ -115,7 +115,7 @@ class CategoryPage extends Component {
                         />
                         <p>{this.state.p_first_index + 1}</p>
                         <p>-</p>
-                        <p>{this.state.p_last_index}</p>
+                        <p>{this.state.p_last_index > this.props.ProductList?.length ? this.props.ProductList?.length : this.state.p_last_index}</p>
                         <img
                             className='cp_m_p_ar'
                             src={ArrowLeftBlack}

@@ -201,6 +201,21 @@
         align-items: center;
         margin-top: 10px;
 
+        .ci_m_p_subt {
+            color: var(--black);
+            font-weight: 400;
+            font-size: 18px;
+            align-self: flex-end;
+            padding-bottom: 5px;
+            margin-right: auto;
+            font-family: Raleway, 'sans-serif';
+
+            span {
+                font-weight: 600;
+                font-size: 23px;
+            }
+        }
+
         .ci_m_p_oof {
             color: red;
             font-weight: 600;
@@ -445,13 +460,27 @@
 
         .ci_m_oof_btn_rmv {
 
+            .ci_m_p_subt {
+                font-size: 12px;
+                padding-bottom: 0px;
+                display: flex;
+                flex-direction: column;
+
+                span {
+                    padding-top: 2px;
+                    font-weight: 700;
+                    font-size: 15px;
+                }
+            }
+
             .ci_m_p_oof {
-                font-size: 18px;
+                font-size: 14.5px;
+                padding-bottom: 5px;
             }
 
             .ci_m_btn_rmv {
-                height: 38px;
-                width: 120px;
+                height: 35px;
+                width: 100px;
                 font-size: 14px;
             }      
         }
