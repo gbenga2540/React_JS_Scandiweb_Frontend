@@ -6,38 +6,57 @@ import { connect } from 'react-redux';
 
 class ProductCard extends Component {
 
-    handleAddtoCart = () => {
-        const AddtoCart = () => {
-            let CartItem = {};
+    AddtoCart = () => {
+        let CartItem = {};
 
-            CartItem["id"] = this.props.product_info?.id;
-            CartItem["brand"] = this.props.product_info?.brand;
-            CartItem["name"] = this.props.product_info?.name;
-            CartItem["gallery"] = this.props.product_info?.gallery;
-            CartItem["prices"] = this.props.product_info?.prices;
-            CartItem["inStock"] = this.props.product_info?.inStock;
-            CartItem["quantity"] = 1;
+        CartItem["id"] = this.props.product_info?.id;
+        CartItem["brand"] = this.props.product_info?.brand;
+        CartItem["name"] = this.props.product_info?.name;
+        CartItem["gallery"] = this.props.product_info?.gallery;
+        CartItem["prices"] = this.props.product_info?.prices;
+        CartItem["inStock"] = this.props.product_info?.inStock;
+        CartItem["attributes"] = this.props.product_info?.attributes;
+        CartItem["quantity"] = 1;
 
-            if (this.props.product_info?.attributes?.length > 0) {
-                alert('Product has Attributes. Please, visit the Description Page to add this product to your cart!!!');
-            } else {
+        if (this.props.product_info?.attributes?.length > 0) {
+            if (window.confirm('This product contains attributes, would you like to select the first option of each attribute as a default before adding to cart?')) {
+                for (let i = 0; i < this.props.product_info?.attributes?.length; i++) {
+                    CartItem[this.props.product_info?.attributes[i]?.id] = this.props.product_info?.attributes[i]?.items[0]?.value;
+                }
                 this.props.AddtoUserCart(CartItem);
+            } else {
+                alert("Product was not added to cart!!!")
             }
+        } else {
+            this.props.AddtoUserCart(CartItem);
         }
+    }
+
+    handleAddtoCart = () => {
         if (this.props.UserCarts?.length > 0) {
             let ProductInCart = false;
             for (let i = 0; i < this.props.UserCarts?.length; i++) {
                 if (this.props.UserCarts[i]?.id === this.props.product_info?.id) {
                     ProductInCart = true;
-                    alert('This Product is available in your cart!!!');
-                    return;
                 }
             }
-            if (!ProductInCart) {
-                AddtoCart();
+
+            if (ProductInCart) {
+                if (this.props.product_info?.attributes?.length > 0) {
+                    if (window.confirm(`This product is available in your cart!. Would you like to add it to your cart once more?`)) {
+                        this.AddtoCart();
+                    }
+                } else {
+                    if (window.confirm(`This product has no attribute and it's available in cart!. Would you like to view the cart page`)) {
+                        this.props.history?.push(`/carts`);
+                    }
+                }
+            } else {
+                this.AddtoCart();
             }
+
         } else {
-            AddtoCart();
+            this.AddtoCart();
         }
     }
 

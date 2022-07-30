@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { GET_PRODUCT_BY_ID } from '../../GraphQL/Queries';
 import parse from "html-react-parser";
 import { back_end_endpoint } from '../../Configs/BackEndEndpoint';
+import Alert from '../../Components/Alert/Alert';
 
 class DescriptionPage extends Component {
 
@@ -12,10 +13,12 @@ class DescriptionPage extends Component {
         super(props)
 
         this.state = {
-            galleryIndex: 0,
             productAttribs: {},
+            galleryIndex: 0,
             ViewMoreDesc: false,
-            error: false
+            error: false,
+            openAlert: false,
+            alertType: 1
         }
     }
 
@@ -38,10 +41,19 @@ class DescriptionPage extends Component {
             .then(async (res) => {
                 const json_data = await res.json();
                 const raw_data = json_data?.data?.product;
-                this.props.SetCurrentProduct(raw_data);
+                if (raw_data?.attributes?.length > 0) {
+                    for (let i = 0; i < raw_data?.attributes?.length; i++) {
+                        const a_id = raw_data?.attributes[i]?.id;
+                        const a_val = raw_data?.attributes[i]?.items[0]?.value;
+                        let prev_state = this.state.productAttribs;
+                        prev_state[a_id] = a_val;
+                        this.setState({ productAttribs: { ...prev_state } });
+                    }
+                }
                 if (raw_data) {
                     this.setState({ error: false });
                 }
+                this.props.SetCurrentProduct(raw_data);
             })
     }
 
@@ -49,27 +61,6 @@ class DescriptionPage extends Component {
         let prevState = this.state.productAttribs;
         prevState[attrib_name] = attrib_value;
         this.setState({ productAttribs: { ...prevState } });
-
-        let cartIndex = 0;
-        let isProductInCart = false;
-        for (let i = 0; i < this.props.UserCarts?.length; i++) {
-            if (this.props.UserCarts[i]?.id === this.props.CurrentProduct?.id) {
-                cartIndex = i;
-                isProductInCart = true;
-                break;
-            } else {
-                isProductInCart = false;
-            }
-        }
-
-        if (isProductInCart) {
-            const prevData = this.props.UserCarts[cartIndex];
-            const newData = {
-                ...prevData
-            };
-            newData[attrib_name] = attrib_value;
-            this.props.UpdateUserCart(cartIndex, { ...newData });
-        }
     }
 
     handlePriceBasedOnCurr = () => {
@@ -80,61 +71,114 @@ class DescriptionPage extends Component {
         }
     }
 
-    handleAddtoCart = () => {
-        const AddtoCart = () => {
-            let CartItem = {};
+    AddtoCart = () => {
+        let CartItem = {};
 
-            CartItem["id"] = this.props.CurrentProduct?.id;
-            CartItem["brand"] = this.props.CurrentProduct?.brand;
-            CartItem["name"] = this.props.CurrentProduct?.name;
-            CartItem["gallery"] = this.props.CurrentProduct?.gallery;
-            CartItem["prices"] = this.props.CurrentProduct?.prices;
-            CartItem["inStock"] = this.props.CurrentProduct?.inStock;
-            CartItem["attributes"] = this.props.CurrentProduct?.attributes;
-            CartItem["quantity"] = 1;
+        CartItem["id"] = this.props.CurrentProduct?.id;
+        CartItem["brand"] = this.props.CurrentProduct?.brand;
+        CartItem["name"] = this.props.CurrentProduct?.name;
+        CartItem["gallery"] = this.props.CurrentProduct?.gallery;
+        CartItem["prices"] = this.props.CurrentProduct?.prices;
+        CartItem["inStock"] = this.props.CurrentProduct?.inStock;
+        CartItem["attributes"] = this.props.CurrentProduct?.attributes;
+        CartItem["quantity"] = 1;
 
-            if (this.props.CurrentProduct?.attributes?.length > 0) {
-                for (let i = 0; i < this.props.CurrentProduct?.attributes?.length; i++) {
-                    CartItem[this.props.CurrentProduct?.attributes[i]?.id] = this.state.productAttribs[this.props.CurrentProduct?.attributes[i]?.id] === undefined ?
-                        this.props.CurrentProduct?.attributes[i]?.items[0]?.value :
-                        this.state.productAttribs[this.props.CurrentProduct?.attributes[i]?.id];
-                }
-                this.props.AddtoUserCart(CartItem);
-            } else {
-                this.props.AddtoUserCart(CartItem);
+        if (this.props.CurrentProduct?.attributes?.length > 0) {
+            for (let i = 0; i < this.props.CurrentProduct?.attributes?.length; i++) {
+                CartItem[this.props.CurrentProduct?.attributes[i]?.id] = this.state.productAttribs[this.props.CurrentProduct?.attributes[i]?.id] === undefined ?
+                    this.props.CurrentProduct?.attributes[i]?.items[0]?.value :
+                    this.state.productAttribs[this.props.CurrentProduct?.attributes[i]?.id];
             }
+            this.props.AddtoUserCart(CartItem);
+        } else {
+            this.props.AddtoUserCart(CartItem);
         }
+    }
 
+    handleAddtoCart = () => {
         if (this.props.UserCarts?.length > 0) {
             let ProductInCart = false;
             for (let i = 0; i < this.props.UserCarts?.length; i++) {
                 if (this.props.UserCarts[i]?.id === this.props.CurrentProduct?.id) {
                     ProductInCart = true;
-                    alert(`This Product is available in your cart, changes to the product's attributes are updated automatically...`);
-                    return;
                 }
             }
-            if (!ProductInCart) {
-                AddtoCart();
+
+            if (ProductInCart) {
+                if (this.props.CurrentProduct?.attributes?.length > 0) {
+                    this.setState({ alertType: 1, openAlert: true });
+                } else {
+                    this.setState({ alertType: 2, openAlert: true });
+                }
+            } else {
+                this.AddtoCart();
             }
+
         } else {
-            AddtoCart();
+            this.AddtoCart();
+        }
+    }
+
+    alertStructure = () => {
+        switch (this.state.alertType) {
+            case 1:
+                return {
+                    heading: "This product is available in your cart!",
+                    sub_heading: "Would you like to add it to your cart once more?",
+                    actions: [
+                        {
+                            name: "Yes, I'd like to",
+                            handleFunc: () => {
+                                this.AddtoCart();
+                                this.setState({ openAlert: false });
+                            }
+                        },
+                        {
+                            name: "Cancel",
+                            handleFunc: () => {
+                                this.setState({ openAlert: false });
+                            }
+                        }
+                    ]
+                }
+            case 2:
+                return {
+                    heading: "This product has no attribute and it's available in cart!",
+                    sub_heading: "Would you like to do?",
+                    actions: [
+                        {
+                            name: "View Cart",
+                            handleFunc: () => {
+                                this.props.history?.push(`/carts`);
+                                this.setState({ openAlert: false });
+                            }
+                        },
+                        {
+                            name: "Cancel",
+                            handleFunc: () => {
+                                this.setState({ openAlert: false });
+                            }
+                        }
+                    ]
+                }
+            default:
+                return;
         }
     }
 
     componentDidMount = () => {
         document.title = 'Scandiweb Dev Test | Description';
         this.props.ClearCurrentProduct();
-        this.getdata();
         this.setState({ productAttribs: {} });
+        this.getdata();
         window.scrollTo(0, 0);
     }
 
     componentDidUpdate = (prevProps) => {
         if (prevProps.match?.params?.id !== this.props.match?.params?.id) {
             this.props.ClearCurrentProduct();
-            this.getdata();
             this.setState({ productAttribs: {} });
+            this.getdata();
             window.scrollTo(0, 0);
         }
     }
@@ -145,6 +189,7 @@ class DescriptionPage extends Component {
                 className='descpage_main'
                 onClick={this.props.handle_CloseCartOrCurr}
             >
+                {this.state.openAlert && <Alert structure={this.alertStructure()} />}
                 <div
                     className='dp_m_fade'
                     id={this.props.openMiniCartOverlay ? 'dp_m_fade' : ''}
@@ -184,13 +229,7 @@ class DescriptionPage extends Component {
                                                 item?.items?.map((values, index) =>
                                                     <h3
                                                         key={index}
-                                                        id={values?.value === (this.props.UserCarts?.filter(data => data.id === this.props.CurrentProduct?.id)?.length > 0 ?
-                                                            this.props.UserCarts?.filter(data => data.id === this.props.CurrentProduct?.id)?.[0][item?.name] :
-                                                            (this.state.productAttribs[item?.id] === undefined ?
-                                                                item?.items[0]?.value :
-                                                                this.state.productAttribs[item?.id]
-                                                            )) ? 'h3' : ''
-                                                        }
+                                                        id={values?.value === this.state.productAttribs?.[item?.id] ? 'h3' : ''}
                                                         onClick={() => this.setProductAttributes(item?.id, values?.value)}
                                                     >{values?.value}</h3>
                                                 )
@@ -200,13 +239,7 @@ class DescriptionPage extends Component {
                                                 item?.items?.map((values, index) =>
                                                     <span
                                                         key={index}
-                                                        id={values?.value === (this.props.UserCarts?.filter(data => data.id === this.props.CurrentProduct?.id)?.length > 0 ?
-                                                            this.props.UserCarts?.filter(data => data.id === this.props.CurrentProduct?.id)?.[0][item?.name] :
-                                                            (this.state.productAttribs[item?.id] === undefined ?
-                                                                item?.items[0]?.value :
-                                                                this.state.productAttribs[item?.id]
-                                                            )) ? 'span' : ''
-                                                        }
+                                                        id={values?.value === this.state.productAttribs?.[item?.id] ? 'span' : ''}
                                                         onClick={() => this.setProductAttributes(item?.id, values?.value)}
                                                     >
                                                         <div style={{ backgroundColor: values?.value }}></div>
@@ -225,10 +258,7 @@ class DescriptionPage extends Component {
                             >
                                 {!this.props.CurrentProduct?.inStock ?
                                     `OUT OF STOCK` :
-                                    `${this.props.UserCarts?.filter(data => data?.id === this.props.CurrentProduct?.id)?.length === 1 ?
-                                        "AVAILABLE IN CART" :
-                                        'ADD TO CART'
-                                    }`
+                                    `ADD TO CART`
                                 }</button>
                             <div className='dp_m_2_desc'>
                                 {this.props.CurrentProduct?.description?.length > 200 ?
@@ -275,8 +305,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         AddtoUserCart: (item) => dispatch({ type: "USER_CARTS", payload: item }),
         SetCurrentProduct: (product) => dispatch({ type: "SET_CURRENT_PRODUCT", payload: product }),
-        ClearCurrentProduct: () => dispatch({ type: "CLEAR_CURRENT_PRODUCT" }),
-        UpdateUserCart: (index, data) => dispatch({ type: "UPDATE_USER_CARTS", product_index: index, product_data: data })
+        ClearCurrentProduct: () => dispatch({ type: "CLEAR_CURRENT_PRODUCT" })
     }
 }
 

@@ -16,29 +16,15 @@ class CartItem extends Component {
     }
 
     increaseProductCount = () => {
-        let cartIndex = 0;
-        for (let i = 0; i < this.props.UserCarts?.length; i++) {
-            if (this.props.UserCarts[i]?.id === this.props.cart_info?.id) {
-                cartIndex = i;
-                break;
-            }
-        }
-        const prevData = this.props.UserCarts[cartIndex];
+        const prevData = this.props.UserCarts[this.props.cart_index];
         const newData = { ...prevData, quantity: prevData?.quantity < 1 ? 1 : prevData?.quantity + 1 };
-        this.props.UpdateUserCart(cartIndex, { ...newData });
+        this.props.UpdateUserCart(this.props.cart_index, { ...newData });
     }
 
     decreaseProductCount = () => {
-        let cartIndex = 0;
-        for (let i = 0; i < this.props.UserCarts?.length; i++) {
-            if (this.props.UserCarts[i]?.id === this.props.cart_info?.id) {
-                cartIndex = i;
-                break;
-            }
-        }
-        const prevData = this.props.UserCarts[cartIndex];
+        const prevData = this.props.UserCarts[this.props.cart_index];
         const newData = { ...prevData, quantity: prevData?.quantity <= 1 ? 1 : prevData?.quantity - 1 };
-        this.props.UpdateUserCart(cartIndex, { ...newData });
+        this.props.UpdateUserCart(this.props.cart_index, { ...newData });
     }
 
     incrementGalleryIndex = () => {
@@ -86,30 +72,16 @@ class CartItem extends Component {
     }
 
     handle_Update_Attribute = (attrib_name, attrib_value) => {
-        let cartIndex = 0;
-        for (let i = 0; i < this.props.UserCarts?.length; i++) {
-            if (this.props.UserCarts[i]?.id === this.props.cart_info?.id) {
-                cartIndex = i;
-                break;
-            }
-        }
-        const prevData = this.props.UserCarts[cartIndex];
+        const prevData = this.props.UserCarts[this.props.cart_index];
         const newData = {
             ...prevData
         };
         newData[attrib_name] = attrib_value;
-        this.props.UpdateUserCart(cartIndex, { ...newData });
+        this.props.UpdateUserCart(this.props.cart_index, { ...newData });
     }
 
     handle_Remove_Cart_Item = () => {
-        let cartIndex = 0;
-        for (let i = 0; i < this.props.UserCarts?.length; i++) {
-            if (this.props.UserCarts[i]?.id === this.props.cart_info?.id) {
-                cartIndex = i;
-                break;
-            }
-        }
-        this.props.RemoveCartItem(cartIndex);
+        this.props.RemoveCartItem(this.props.cart_index);
     }
 
     getdata = async () => {
@@ -128,14 +100,7 @@ class CartItem extends Component {
             .then(async (res) => {
                 const json_data = await res.json();
                 const raw_data = json_data?.data?.product;
-                let cartIndex = 0;
-                for (let i = 0; i < this.props.UserCarts?.length; i++) {
-                    if (this.props.UserCarts[i]?.id === raw_data?.id) {
-                        cartIndex = i;
-                        break;
-                    }
-                }
-                const prevData = this.props.UserCarts[cartIndex];
+                const prevData = this.props.UserCarts[this.props.cart_index];
                 const newData = {
                     ...prevData,
                     quantity: prevData?.quantity <= 1 ? 1 : prevData?.quantity,
@@ -148,7 +113,7 @@ class CartItem extends Component {
                 for (let i = 0; i < raw_data?.attributes?.length; i++) {
                     newData[raw_data?.attributes[i]?.id] = prevData[raw_data?.attributes[i]?.id];
                 }
-                this.props.UpdateUserCart(cartIndex, { ...newData });
+                this.props.UpdateUserCart(this.props.cart_index, { ...newData });
             })
     }
 
@@ -183,7 +148,7 @@ class CartItem extends Component {
                                             item.items?.map((values, index) =>
                                                 <h3
                                                     key={index}
-                                                    id={values?.value === this.props.UserCarts?.filter(data => data.id === this.props.cart_info?.id)[0][item.name] ? 'h3' : ''}
+                                                    id={values?.value === this.props.UserCarts?.[this.props.cart_index]?.[item?.name] ? 'h3' : ''}
                                                     onClick={() => this.handle_Update_Attribute(item?.name, values?.value)}
                                                 >{values?.value}</h3>
                                             )
@@ -193,7 +158,7 @@ class CartItem extends Component {
                                             item?.items?.map((values, index) =>
                                                 <span
                                                     key={index}
-                                                    id={values?.value === this.props.UserCarts?.filter(data => data.id === this.props.cart_info?.id)[0][item.name] ? 'span' : ''}
+                                                    id={values?.value === this.props.UserCarts?.[this.props.cart_index]?.[item?.name] ? 'span' : ''}
                                                     onClick={() => this.handle_Update_Attribute(item?.name, values?.value)}
                                                 >
                                                     <div style={{ backgroundColor: values?.value }}></div>
@@ -215,14 +180,14 @@ class CartItem extends Component {
                             </button>
                         </div>
                         <div className='ci_m_2_image'>
-                            {!this.props.isMini &&
+                            {!this.props.isMini && this.props.cart_info?.gallery?.length > 1 &&
                                 <button className='ci_m_2_image_al'
                                     onClick={this.decrementGalleryIndex}
                                 >
                                     <img src={ArrowLeft} alt='L' />
                                 </button>
                             }
-                            {!this.props.isMini &&
+                            {!this.props.isMini && this.props.cart_info?.gallery?.length > 1 &&
                                 <button className=''
                                     onClick={this.incrementGalleryIndex}
                                 >
