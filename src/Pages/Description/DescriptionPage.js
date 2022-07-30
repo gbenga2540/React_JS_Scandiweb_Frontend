@@ -144,7 +144,7 @@ class DescriptionPage extends Component {
             case 2:
                 return {
                     heading: "This product has no attribute and it's available in cart!",
-                    sub_heading: "Would you like to do?",
+                    sub_heading: "What would you like to do?",
                     actions: [
                         {
                             name: "View Cart",
