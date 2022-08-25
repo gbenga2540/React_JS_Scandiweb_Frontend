@@ -32,7 +32,7 @@ class CategoryPage extends Component {
         window.scrollTo(0, 0);
     }
 
-    getdata = async () => {
+    getdata = () => {
         const load_products = async () => {
             await fetch(back_end_endpoint(), {
                 method: 'POST',
