@@ -53,8 +53,6 @@ class CategoryPage extends Component {
                     const json_data = await res.json();
                     const raw_data = json_data?.data?.category;
                     this.props.SetProductList(raw_data?.products);
-                    if (this.props.ProductList?.length > 0) {
-                    }
                     this.setState({
                         p_first_index: 0,
                         p_last_index: this.state.max_product_per_page,
