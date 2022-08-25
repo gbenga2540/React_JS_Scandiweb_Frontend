@@ -64,10 +64,10 @@ class CategoryPage extends Component {
         if (this.props.AllCategories.length > 0) {
             load_products();
         } else {
-            // Waits for 1s for the category name to load
-            setTimeout(async () => {
+            // Waits for 1.2s for the category name to load
+            setTimeout(() => {
                 load_products();
-            }, 1000)
+            }, 1200)
         }
     }
 
