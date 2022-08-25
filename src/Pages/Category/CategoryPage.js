@@ -33,7 +33,7 @@ class CategoryPage extends Component {
     }
 
     getdata = async () => {
-        if (this.props.AllCategories.length > 0) {
+        const load_products = async () => {
             await fetch(back_end_endpoint(), {
                 method: 'POST',
                 headers: {
@@ -58,7 +58,16 @@ class CategoryPage extends Component {
                         p_last_index: this.state.max_product_per_page,
                         l_error: false
                     });
-                })
+                });
+        }
+
+        if (this.props.AllCategories.length > 0) {
+            load_products();
+        } else {
+            // Waits for 1s for the category name to load
+            setTimeout(async () => {
+                load_products();
+            }, 1000)
         }
     }
 
